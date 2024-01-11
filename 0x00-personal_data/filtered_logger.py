@@ -3,7 +3,7 @@
 
 import re
 import logging
-from mysql.connector import connection
+import mysql.connector
 from os import environ
 from typing import List
 
@@ -50,13 +50,13 @@ def get_logger() -> logging.Logger:
     return logger
 
 
-def get_db() -> connection.MySQLConnection:
+def get_db() -> mysql.connector.connection.MySQLConnection:
     """Redacting Formatter class."""
-    connector = connection.MySQLConnection(
+    connector = mysql.connector.connection.MySQLConnection(
         user=environ.get("PERSONAL_DATA_DB_USERNAME", "root"),
         password=environ.get("PERSONAL_DATA_DB_PASSWORD", ""),
         host=environ.get("PERSONAL_DATA_DB_HOST", "localhost"),
-        database=environ.get("PERSONAL_DATA_DB_NAME"))
+        database=environ.get("PERSONAL_DATA_DB_NAME", "holberton"))
     return connector
 
 
