@@ -2,10 +2,10 @@
 """Logging Module"""
 
 import re
-from typing import List
 import logging
-import mysql.connector
-from os import getenv
+from mysql.connector import connection
+from os import environ
+from typing import List
 
 PII_FIELDS = ("name", "email", "phone", "ssn", "password")
 
@@ -50,14 +50,14 @@ def get_logger() -> logging.Logger:
     return logger
 
 
-def get_db() -> mysql.connector.connection.MySQLConnection:
+def get_db() -> connection.MySQLConnection:
     """Redacting Formatter class."""
-    return mysql.connector.connection.MySQLConnection(
-        user=getenv("PERSONAL_DATA_DB_USERNAME", "root"),
-        password=getenv("PERSONAL_DATA_DB_PASSWORD", ""),
-        host=getenv("PERSONAL_DATA_DB_HOST", "localhost"),
-        database=getenv("PERSONAL_DATA_DB_NAME"),
-    )
+    connector = connection.MySQLConnection(
+        user=environ.get("PERSONAL_DATA_DB_USERNAME", "root"),
+        password=environ.get("PERSONAL_DATA_DB_PASSWORD", ""),
+        host=environ.get("PERSONAL_DATA_DB_HOST", "localhost"),
+        database=environ.get("PERSONAL_DATA_DB_NAME"))
+    return connector
 
 
 def main():
