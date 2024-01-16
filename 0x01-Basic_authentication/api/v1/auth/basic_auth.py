@@ -83,3 +83,58 @@ class BasicAuth(Auth):
             if ":" in decoded_base64_authorization_header
             else (None, None)
         )
+
+    def user_object_from_credentials(
+        self, user_email: str, user_pwd: str
+    ) -> TypeVar("User"):
+        """Retrieves a User object based on the provided credentials.
+
+        Parameters:
+            user_email (str): User's email address.
+            user_pwd (str): User's password.
+
+        Returns:
+            TypeVar("User"): The User object if found, otherwise None.
+        """
+        if (
+            not user_email
+            or not isinstance(user_email, str)
+            or not user_pwd
+            or not isinstance(user_pwd, str)
+        ):
+            return None
+
+        try:
+            users = User.search({"email": user_email})
+            if not users:
+                return None
+
+            for user in users:
+                if user.is_valid_password(user_pwd):
+                    return user
+        except Exception:
+            return None
+
+    def current_user(self, request=None) -> TypeVar("User"):
+        """Returns the current user for a fully
+        protected API with Basic Authentication.
+
+        Parameters:
+            request: Optional request object.
+
+        Returns:
+            TypeVar("User"): The current User object
+            if authentication is successful, otherwise None.
+        """
+        try:
+            header = self.authorization_header(request)
+            base64_header = self.extract_base64_authorization_header(header)
+            decode_base64_header = self.decode_base64_authorization_header(
+                base64_header
+            )
+            user_email, user_pwd = self.extract_user_credentials(
+                decode_base64_header
+            )
+            return self.user_object_from_credentials(user_email, user_pwd)
+        except Exception:
+            return None
