@@ -5,19 +5,44 @@ Route module for the API
 from os import getenv
 from api.v1.views import app_views
 from flask import Flask, jsonify, abort, request
-from flask_cors import (CORS, cross_origin)
-import os
+from flask_cors import CORS, cross_origin
+from api.v1.auth.auth import Auth
+from api.v1.auth.basic_auth import BasicAuth
 
 
 app = Flask(__name__)
 app.register_blueprint(app_views)
 CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 
+auth = None
+if getenv("AUTH_TYPE") == "auth":
+    auth = Auth()
+elif getenv("AUTH_TYPE") == "basic_auth":
+    auth = BasicAuth()
+
+
+@app.before_request
+def authentication_handler() -> None:
+    """Authentication handler before each request.
+
+    Returns:
+        None: Modifies the behavior of the request handling process.
+    """
+    exceptions = ["/api/v1/status/",
+                  "/api/v1/unauthorized/",
+                  "/api/v1/forbidden/"]
+
+    if not auth or not auth.require_auth(request.path, exceptions):
+        return None
+    elif not auth.authorization_header(request):
+        abort(401)
+    elif not auth.current_user(request):
+        abort(403)
+
 
 @app.errorhandler(404)
 def not_found(error) -> str:
-    """ Not found handler
-    """
+    """Not found handler"""
     return jsonify({"error": "Not found"}), 404
 
 
