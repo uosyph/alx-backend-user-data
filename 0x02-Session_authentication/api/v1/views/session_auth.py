@@ -45,10 +45,10 @@ def login():
         if not user.is_valid_password(password):
             return jsonify({"error": "wrong password"}), 401
         else:
-            sesion_id = auth.create_session(user.id)
-            sesion_name = getenv("SESSION_NAME")
+            session_id = auth.create_session(user.id)
+            session_name = getenv("SESSION_NAME")
             user_dict = jsonify(user.to_json())
-            user_dict.set_cookie(sesion_name, sesion_id)
+            user_dict.set_cookie(session_name, session_id)
             return user_dict
 
 

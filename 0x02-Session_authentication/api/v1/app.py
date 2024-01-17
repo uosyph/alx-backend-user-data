@@ -34,10 +34,12 @@ def authentication_handler() -> None:
     Returns:
         None: Modifies the behavior of the request handling process.
     """
-    exceptions = ["/api/v1/status/",
-                  "/api/v1/unauthorized/",
-                  "/api/v1/forbidden/",
-                  "/api/v1/auth_session/login/"]
+    exceptions = [
+        "/api/v1/status/",
+        "/api/v1/unauthorized/",
+        "/api/v1/forbidden/",
+        "/api/v1/auth_session/login/",
+    ]
 
     if not auth or not auth.require_auth(request.path, exceptions):
         return None
