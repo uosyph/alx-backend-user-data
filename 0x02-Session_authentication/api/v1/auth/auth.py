@@ -2,7 +2,6 @@
 """Module for managing API authentication."""
 
 from flask import request
-from os import getenv
 from typing import List, TypeVar
 
 
@@ -55,21 +54,3 @@ class Auth:
             TypeVar('User'): The current user.
         """
         return None
-
-    def session_cookie(self, request=None):
-        """Retrieve the session cookie from the given request.
-
-        Args:
-            request (object, optional): The request object. Defaults to None.
-
-        Returns:
-            str: The value of the session cookie, or None if not found.
-        """
-        if not request:
-            return None
-
-        return (
-            request.cookies.get(getenv("SESSION_NAME"))
-            if getenv("SESSION_NAME")
-            else None
-        )
