@@ -4,12 +4,10 @@
 
 from bcrypt import hashpw, gensalt, checkpw
 from sqlalchemy.orm.exc import NoResultFound
-from sqlalchemy.exc import InvalidRequestError
 from uuid import uuid4
-from typing import Union
+from typing import TypeVar
 
 from db import DB
-from user import User
 
 
 def _hash_password(password: str) -> bytes:
@@ -32,7 +30,7 @@ class Auth:
         """Instance"""
         self._db = DB()
 
-    def register_user(self, email: str, password: str) -> User:
+    def register_user(self, email: str, password: str) -> TypeVar("User"):
         """Registers and returns a new user"""
         try:
             self._db.find_user_by(email=email)
