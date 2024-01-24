@@ -113,7 +113,8 @@ class Auth:
             session_id (str): The session ID.
 
         Returns:
-            Union[str, None]: The user associated with the session ID or None if not found.
+            Union[str, None]: The user associated with the session ID,
+            or None if not found.
         """
         if session_id is None:
             return None
